@@ -3,7 +3,7 @@
 @theme {
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Inter', system-ui, sans-serif;
-  --color-cream: #FAF8F5;
+  --color-cream: #FAFAF8;
   --color-warm: #F5F0EB;
   --color-charcoal: #1A1A1A;
   --color-stone: #8A8178;
@@ -12,7 +12,7 @@
 }
 
 ::selection {
-  background: var(--color-gold);
+  background: var(--color-charcoal);
   color: white;
 }
 
@@ -25,4 +25,13 @@ body {
   background: var(--color-cream);
   color: var(--color-charcoal);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  cursor: default;
+}
+
+a, button {
+  cursor: pointer;
 }

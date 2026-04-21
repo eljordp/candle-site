@@ -1,224 +1,487 @@
 import { useState } from 'react'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 
 const candles = [
   {
     id: 1,
-    name: 'Sauvage',
-    inspiration: 'Dior Sauvage',
+    name: 'SAUVAGE',
+    subtitle: 'Dior Sauvage',
     price: 48,
-    notes: 'Bergamot, Ambroxan, Vanilla',
-    description: 'Raw, magnetic, untamed. A wild freshness that opens with Calabrian bergamot before settling into a warm, woody embrace. For the one who walks into a room and changes it.',
-    color: 'from-blue-950 via-slate-900 to-zinc-800',
-    accent: '#2C3E6B',
+    size: '240g',
+    notes: ['Bergamot', 'Ambroxan', 'Vanilla'],
+    description: 'Raw, magnetic, untamed. Calabrian bergamot settles into a warm, woody embrace.',
+    bg: '#0F1724',
+    labelBg: '#1a2744',
   },
   {
     id: 2,
-    name: 'Rouge',
-    inspiration: 'Baccarat Rouge 540',
+    name: 'ROUGE',
+    subtitle: 'Baccarat Rouge 540',
     price: 58,
-    notes: 'Saffron, Jasmine, Ambergris, Cedar',
-    description: 'Liquid crystal. Saffron and jasmine dissolve into a luminous amber that lingers for hours — ethereal, addictive, unmistakable. The scent people ask about.',
-    color: 'from-red-950 via-rose-900 to-amber-900',
-    accent: '#8B2252',
+    size: '240g',
+    notes: ['Saffron', 'Jasmine', 'Ambergris', 'Cedar'],
+    description: 'Liquid crystal. Saffron and jasmine dissolve into luminous amber that lingers for hours.',
+    bg: '#2A1019',
+    labelBg: '#3d1826',
   },
   {
     id: 3,
-    name: 'Guilty',
-    inspiration: 'Gucci Guilty',
+    name: 'GUILTY',
+    subtitle: 'Gucci Guilty',
     price: 48,
-    notes: 'Mandarin, Lilac, Patchouli',
-    description: 'Unapologetic warmth. Italian mandarin and pink pepper give way to a bold patchouli base — sensual, daring, and impossibly smooth. For nights that don\'t end early.',
-    color: 'from-stone-900 via-neutral-800 to-zinc-900',
-    accent: '#5C4033',
+    size: '240g',
+    notes: ['Mandarin', 'Lilac', 'Patchouli'],
+    description: 'Unapologetic warmth. Italian mandarin gives way to a bold, impossibly smooth patchouli.',
+    bg: '#1A1714',
+    labelBg: '#2d2820',
   },
 ]
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1], delay },
+  }),
+}
+
+const stagger = {
+  visible: {
+    transition: { staggerChildren: 0.15 },
+  },
+}
+
 function Nav() {
+  const { scrollY } = useScroll()
+  const navBg = useTransform(scrollY, [0, 100], ['rgba(250,248,245,0)', 'rgba(250,248,245,0.95)'])
+  const borderOp = useTransform(scrollY, [0, 100], [0, 0.08])
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-cream/80 backdrop-blur-md border-b border-charcoal/5">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between h-16 md:h-20">
-        <a href="#" className="font-serif text-2xl md:text-3xl tracking-[0.2em] text-charcoal">
+    <motion.nav
+      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md"
+      style={{ backgroundColor: navBg, borderBottom: useTransform(borderOp, (v) => `1px solid rgba(26,26,26,${v})`) }}
+    >
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex items-center justify-between h-14 md:h-16">
+        <motion.a
+          href="#"
+          className="font-sans text-[13px] md:text-[14px] tracking-[0.3em] font-medium text-charcoal"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.2 }}
+        >
           LUMIERE
-        </a>
-        <div className="hidden md:flex items-center gap-10 font-sans text-[13px] tracking-[0.15em] uppercase text-stone">
-          <a href="#collection" className="hover:text-charcoal transition-colors duration-300">Collection</a>
-          <a href="#story" className="hover:text-charcoal transition-colors duration-300">Story</a>
-          <a href="#contact" className="hover:text-charcoal transition-colors duration-300">Contact</a>
-        </div>
-        <a href="#collection" className="font-sans text-[12px] tracking-[0.15em] uppercase border border-charcoal/20 px-5 py-2.5 hover:bg-charcoal hover:text-cream transition-all duration-300">
+        </motion.a>
+        <motion.div
+          className="hidden md:flex items-center gap-10 font-sans text-[11px] tracking-[0.15em] uppercase text-stone"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.4 }}
+        >
+          <a href="#collection" className="hover:text-charcoal transition-colors duration-500">Collection</a>
+          <a href="#about" className="hover:text-charcoal transition-colors duration-500">About</a>
+          <a href="#contact" className="hover:text-charcoal transition-colors duration-500">Contact</a>
+        </motion.div>
+        <motion.a
+          href="#collection"
+          className="font-sans text-[10px] tracking-[0.2em] uppercase text-charcoal hover:text-stone transition-colors duration-500"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.6 }}
+        >
           Shop
-        </a>
+        </motion.a>
       </div>
-    </nav>
+    </motion.nav>
   )
 }
 
 function Hero() {
+  const { scrollYProgress } = useScroll()
+  const y = useTransform(scrollYProgress, [0, 0.3], [0, -80])
+  const opacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
+
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center px-6 pt-20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-warm via-cream to-cream" />
-      <div className="relative z-10 text-center max-w-4xl mx-auto">
-        <p className="font-sans text-[11px] md:text-[13px] tracking-[0.35em] uppercase text-stone mb-6 md:mb-8">
-          Luxury Fragrance Candles
-        </p>
-        <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl font-light text-charcoal leading-[0.9] tracking-tight mb-8 md:mb-10">
-          Scent is<br />
-          <em className="italic text-stone">memory</em>
-        </h1>
-        <p className="font-sans text-base md:text-lg text-stone max-w-lg mx-auto leading-relaxed font-light mb-12">
-          Hand-poured candles inspired by the world's most iconic fragrances.
-          Each one crafted to fill your space with something unforgettable.
-        </p>
-        <a
-          href="#collection"
-          className="inline-block font-sans text-[12px] tracking-[0.2em] uppercase bg-charcoal text-cream px-10 py-4 hover:bg-stone transition-colors duration-500"
+    <motion.section
+      className="h-screen flex flex-col items-center justify-center px-6 relative"
+      style={{ opacity }}
+    >
+      <motion.div className="text-center" style={{ y }}>
+        <motion.div
+          className="w-12 h-[1px] bg-charcoal/20 mx-auto mb-10"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 1.2, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        />
+        <motion.p
+          className="font-sans text-[10px] md:text-[11px] tracking-[0.4em] uppercase text-stone/70 mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
         >
-          Explore the Collection
-        </a>
-      </div>
-
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce">
-        <svg width="20" height="30" viewBox="0 0 20 30" fill="none" className="text-stone/40">
-          <rect x="1" y="1" width="18" height="28" rx="9" stroke="currentColor" strokeWidth="1.5" />
-          <circle cx="10" cy="10" r="2" fill="currentColor" className="animate-pulse" />
-        </svg>
-      </div>
-    </section>
+          Fragrance Candles
+        </motion.p>
+        <motion.h1
+          className="font-serif text-[clamp(3rem,10vw,9rem)] font-light text-charcoal leading-[0.85] tracking-[-0.02em] mb-8"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+        >
+          LUMIERE
+        </motion.h1>
+        <motion.p
+          className="font-sans text-[13px] md:text-[14px] text-stone/60 max-w-sm mx-auto leading-relaxed font-light"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1.1 }}
+        >
+          Iconic scents, reimagined for your space
+        </motion.p>
+        <motion.div
+          className="w-12 h-[1px] bg-charcoal/20 mx-auto mt-10"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 1.2, delay: 1.3, ease: [0.25, 0.1, 0.25, 1] }}
+        />
+      </motion.div>
+    </motion.section>
   )
 }
 
-function CandleCard({ candle, index }) {
-  const [isHovered, setIsHovered] = useState(false)
-  const isReversed = index % 2 !== 0
+function ProductCard({ candle, index }) {
+  const [hovered, setHovered] = useState(false)
 
   return (
-    <div className="grid md:grid-cols-2 gap-0 min-h-[80vh]">
-      {/* Image Side */}
-      <div
-        className={`relative overflow-hidden bg-gradient-to-br ${candle.color} flex items-center justify-center min-h-[50vh] ${isReversed ? 'md:order-2' : ''}`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full bg-white/5 blur-2xl" />
+    <motion.div
+      className="group cursor-pointer"
+      variants={fadeUp}
+      custom={index * 0.1}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-50px' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Product Visual */}
+      <div className="relative aspect-[3/4] mb-6 overflow-hidden" style={{ backgroundColor: candle.bg }}>
+        {/* Ambient glow */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{ opacity: hovered ? 0.15 : 0.08 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-40 h-40 rounded-full bg-amber-200 blur-[80px]" />
+        </motion.div>
+
+        {/* Candle */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <motion.div
+            className="relative"
+            animate={{ y: hovered ? -8 : 0 }}
+            transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            {/* Flame */}
+            <motion.div
+              className="absolute -top-8 left-1/2 -translate-x-1/2"
+              animate={{
+                opacity: hovered ? 1 : 0.4,
+                scale: hovered ? 1 : 0.8,
+              }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="w-2 h-5 bg-gradient-to-t from-amber-500 via-orange-300 to-yellow-100 rounded-full blur-[1px]" />
+              <motion.div
+                className="absolute inset-0 w-2 h-5 bg-gradient-to-t from-amber-500/50 via-orange-300/30 to-transparent rounded-full blur-sm"
+                animate={{ scaleY: [1, 1.15, 1], scaleX: [1, 0.9, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            </motion.div>
+
+            {/* Wick */}
+            <div className="w-[1px] h-3 bg-stone/60 mx-auto" />
+
+            {/* Jar */}
+            <div
+              className="w-28 h-32 md:w-32 md:h-36 rounded-sm border border-white/10 flex flex-col items-center justify-center"
+              style={{ backgroundColor: candle.labelBg }}
+            >
+              <span className="font-sans text-[8px] tracking-[0.4em] text-white/30 mb-3">LUMIERE</span>
+              <div className="w-8 h-[0.5px] bg-white/15 mb-3" />
+              <span className="font-sans text-[10px] md:text-[11px] tracking-[0.25em] text-white/80 font-light">
+                {candle.name}
+              </span>
+              <div className="w-8 h-[0.5px] bg-white/15 mt-3" />
+              <span className="font-sans text-[7px] tracking-[0.3em] text-white/25 mt-3">{candle.size}</span>
+            </div>
+          </motion.div>
         </div>
-        <div className={`relative transition-transform duration-700 ${isHovered ? 'scale-105' : 'scale-100'}`}>
-          <div className="w-48 h-64 md:w-56 md:h-72 rounded-sm bg-white/10 backdrop-blur-sm border border-white/20 flex flex-col items-center justify-center shadow-2xl">
-            <div className="w-6 h-0.5 bg-gold mb-4 rounded-full" />
-            <span className="font-serif text-white/90 text-3xl md:text-4xl tracking-wide">{candle.name}</span>
-            <div className="w-6 h-0.5 bg-gold mt-4 rounded-full" />
-            <span className="font-sans text-[10px] tracking-[0.3em] uppercase text-white/50 mt-6">LUMIERE</span>
-          </div>
-        </div>
+
+        {/* Quick add on hover */}
+        <AnimatePresence>
+          {hovered && (
+            <motion.div
+              className="absolute bottom-0 left-0 right-0 p-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <button className="w-full font-sans text-[10px] tracking-[0.2em] uppercase bg-white/10 backdrop-blur-sm text-white/80 py-3 border border-white/10 hover:bg-white/20 transition-colors">
+                Add to Cart
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Text Side */}
-      <div className={`flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 md:py-0 bg-cream ${isReversed ? 'md:order-1' : ''}`}>
-        <p className="font-sans text-[11px] tracking-[0.3em] uppercase text-gold mb-4">
-          Inspired by {candle.inspiration}
+      {/* Product Info — minimal like Byredo */}
+      <div className="text-center">
+        <p className="font-sans text-[10px] tracking-[0.25em] uppercase text-stone/50 mb-1.5">
+          {candle.subtitle}
         </p>
-        <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl font-light text-charcoal mb-6 tracking-tight">
+        <h3 className="font-sans text-[13px] tracking-[0.15em] text-charcoal mb-1.5 font-normal">
           {candle.name}
-        </h2>
-        <p className="font-sans text-stone leading-relaxed mb-8 text-[15px] font-light max-w-md">
-          {candle.description}
-        </p>
-        <div className="mb-10">
-          <p className="font-sans text-[11px] tracking-[0.25em] uppercase text-stone/60 mb-2">Notes</p>
-          <p className="font-serif text-lg italic text-charcoal/80">{candle.notes}</p>
-        </div>
-        <div className="flex items-center gap-8">
-          <span className="font-serif text-3xl text-charcoal">${candle.price}</span>
-          <button className="font-sans text-[12px] tracking-[0.2em] uppercase bg-charcoal text-cream px-8 py-3.5 hover:bg-stone transition-colors duration-500">
-            Add to Cart
-          </button>
-        </div>
+        </h3>
+        <p className="font-sans text-[13px] text-stone/70">${candle.price}</p>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
-function Story() {
+function Collection() {
   return (
-    <section id="story" className="py-24 md:py-36 px-6 bg-warm">
-      <div className="max-w-3xl mx-auto text-center">
-        <p className="font-sans text-[11px] tracking-[0.35em] uppercase text-gold mb-6">Our Story</p>
-        <h2 className="font-serif text-4xl md:text-6xl font-light text-charcoal mb-10 tracking-tight leading-tight">
-          Born from obsession,<br />
-          <em className="italic text-stone">poured with intention</em>
-        </h2>
-        <p className="font-sans text-stone text-[15px] md:text-base leading-relaxed font-light mb-8 max-w-xl mx-auto">
-          We believe the fragrances you love shouldn't disappear when you leave the room.
-          Each candle is hand-poured in small batches using premium soy wax and cotton wicks,
-          capturing the essence of iconic scents reimagined for your space.
-        </p>
-        <p className="font-sans text-stone text-[15px] md:text-base leading-relaxed font-light max-w-xl mx-auto">
-          No shortcuts. No synthetics. Just clean-burning, long-lasting luxury
-          that transforms any room into something worth staying in.
-        </p>
+    <section id="collection" className="py-24 md:py-36 px-6 md:px-12 bg-cream">
+      <div className="max-w-[1200px] mx-auto">
+        <motion.div
+          className="text-center mb-16 md:mb-24"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={stagger}
+        >
+          <motion.p
+            className="font-sans text-[10px] tracking-[0.4em] uppercase text-stone/50 mb-4"
+            variants={fadeUp}
+          >
+            The Collection
+          </motion.p>
+          <motion.div className="w-8 h-[1px] bg-charcoal/15 mx-auto" variants={fadeUp} />
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+          {candles.map((candle, i) => (
+            <ProductCard key={candle.id} candle={candle} index={i} />
+          ))}
+        </div>
       </div>
     </section>
   )
 }
 
-function Features() {
-  const features = [
-    { title: '60+ Hours', subtitle: 'Burn Time', desc: 'Slow, even burn from first light to last.' },
-    { title: '100% Soy', subtitle: 'Clean Wax', desc: 'No paraffin. No toxins. Just pure soy.' },
-    { title: 'Hand-Poured', subtitle: 'Small Batch', desc: 'Every candle made with intention.' },
+function ProductDetail() {
+  const [activeCandle, setActiveCandle] = useState(candles[1])
+
+  return (
+    <section className="py-16 md:py-28 px-6 md:px-12 bg-white">
+      <div className="max-w-[1200px] mx-auto">
+        <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+          {/* Image */}
+          <motion.div
+            className="relative aspect-square flex items-center justify-center"
+            style={{ backgroundColor: activeCandle.bg }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+          >
+            <motion.div
+              className="absolute top-1/3 left-1/2 -translate-x-1/2 w-60 h-60 rounded-full bg-amber-200 blur-[100px] opacity-10"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <div className="relative">
+              <motion.div
+                className="absolute -top-10 left-1/2 -translate-x-1/2"
+                animate={{ opacity: [0.6, 1, 0.6] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <div className="w-2.5 h-6 bg-gradient-to-t from-amber-500 via-orange-300 to-yellow-100 rounded-full blur-[1px]" />
+                <motion.div
+                  className="absolute inset-0 w-3 h-7 bg-gradient-to-t from-amber-500/40 to-transparent rounded-full blur-md"
+                  animate={{ scaleY: [1, 1.2, 1] }}
+                  transition={{ duration: 1.2, repeat: Infinity }}
+                />
+              </motion.div>
+              <div className="w-[1px] h-4 bg-stone/50 mx-auto" />
+              <div
+                className="w-36 h-44 md:w-44 md:h-52 rounded-sm border border-white/10 flex flex-col items-center justify-center"
+                style={{ backgroundColor: activeCandle.labelBg }}
+              >
+                <span className="font-sans text-[8px] tracking-[0.4em] text-white/30 mb-4">LUMIERE</span>
+                <div className="w-10 h-[0.5px] bg-white/15 mb-4" />
+                <span className="font-sans text-[13px] tracking-[0.3em] text-white/85 font-light">{activeCandle.name}</span>
+                <div className="w-10 h-[0.5px] bg-white/15 mt-4" />
+                <span className="font-sans text-[8px] tracking-[0.3em] text-white/25 mt-4">{activeCandle.size}</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Details */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={stagger}
+          >
+            <motion.p variants={fadeUp} className="font-sans text-[10px] tracking-[0.35em] uppercase text-stone/50 mb-3">
+              {activeCandle.subtitle}
+            </motion.p>
+            <motion.h2 variants={fadeUp} className="font-serif text-4xl md:text-5xl font-light text-charcoal mb-4 tracking-tight">
+              {activeCandle.name}
+            </motion.h2>
+            <motion.p variants={fadeUp} className="font-sans text-[15px] text-charcoal mb-8">
+              ${activeCandle.price}
+            </motion.p>
+            <motion.p variants={fadeUp} className="font-sans text-[14px] text-stone/70 leading-relaxed mb-8 max-w-sm font-light">
+              {activeCandle.description}
+            </motion.p>
+
+            <motion.div variants={fadeUp} className="mb-8">
+              <p className="font-sans text-[10px] tracking-[0.3em] uppercase text-stone/40 mb-3">Notes</p>
+              <div className="flex gap-4">
+                {activeCandle.notes.map((note) => (
+                  <span key={note} className="font-sans text-[12px] text-charcoal/70 border border-charcoal/10 px-4 py-2">
+                    {note}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="flex gap-3 mb-10">
+              {candles.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setActiveCandle(c)}
+                  className={`w-10 h-10 rounded-full border-2 transition-all duration-300 ${
+                    activeCandle.id === c.id ? 'border-charcoal scale-110' : 'border-transparent'
+                  }`}
+                  style={{ backgroundColor: c.bg }}
+                />
+              ))}
+            </motion.div>
+
+            <motion.button
+              variants={fadeUp}
+              className="font-sans text-[11px] tracking-[0.2em] uppercase bg-charcoal text-cream px-12 py-4 hover:bg-charcoal/80 transition-colors duration-500"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Add to Cart — ${activeCandle.price}
+            </motion.button>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Details() {
+  const items = [
+    { label: 'Burn Time', value: '60+ hours' },
+    { label: 'Wax', value: '100% natural soy' },
+    { label: 'Wick', value: 'Cotton, lead-free' },
+    { label: 'Made In', value: 'Small batch, hand-poured' },
   ]
 
   return (
-    <section className="py-20 md:py-28 px-6 bg-cream">
-      <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-12 md:gap-16">
-        {features.map((f, i) => (
-          <div key={i} className="text-center">
-            <p className="font-serif text-4xl md:text-5xl text-charcoal mb-2">{f.title}</p>
-            <p className="font-sans text-[11px] tracking-[0.25em] uppercase text-gold mb-4">{f.subtitle}</p>
-            <p className="font-sans text-stone text-sm font-light">{f.desc}</p>
-          </div>
+    <section className="py-20 md:py-28 px-6 bg-cream border-t border-charcoal/5">
+      <motion.div
+        className="max-w-[900px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-10"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={stagger}
+      >
+        {items.map((item) => (
+          <motion.div key={item.label} variants={fadeUp} className="text-center">
+            <p className="font-sans text-[10px] tracking-[0.3em] uppercase text-stone/40 mb-2">{item.label}</p>
+            <p className="font-sans text-[13px] text-charcoal font-light">{item.value}</p>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
+    </section>
+  )
+}
+
+function About() {
+  return (
+    <section id="about" className="py-24 md:py-36 px-6 bg-white">
+      <motion.div
+        className="max-w-lg mx-auto text-center"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={stagger}
+      >
+        <motion.div variants={fadeUp} className="w-8 h-[1px] bg-charcoal/15 mx-auto mb-10" />
+        <motion.p variants={fadeUp} className="font-sans text-[14px] text-stone/60 leading-[1.9] font-light mb-8">
+          We believe the fragrances you love shouldn't disappear when you leave the room.
+          Each candle is hand-poured in small batches using premium soy wax and cotton wicks.
+        </motion.p>
+        <motion.p variants={fadeUp} className="font-sans text-[14px] text-stone/60 leading-[1.9] font-light">
+          No shortcuts. No synthetics. Just clean-burning, long-lasting luxury.
+        </motion.p>
+        <motion.div variants={fadeUp} className="w-8 h-[1px] bg-charcoal/15 mx-auto mt-10" />
+      </motion.div>
     </section>
   )
 }
 
 function Contact() {
   return (
-    <section id="contact" className="py-24 md:py-36 px-6 bg-charcoal text-cream">
-      <div className="max-w-2xl mx-auto text-center">
-        <p className="font-sans text-[11px] tracking-[0.35em] uppercase text-gold mb-6">Stay Close</p>
-        <h2 className="font-serif text-4xl md:text-5xl font-light mb-6 tracking-tight">
-          Be the first to know
-        </h2>
-        <p className="font-sans text-cream/50 text-[15px] font-light mb-10 max-w-md mx-auto">
-          New scents, restocks, and limited editions — straight to your inbox. No spam, ever.
-        </p>
-        <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+    <section id="contact" className="py-24 md:py-36 px-6 bg-charcoal">
+      <motion.div
+        className="max-w-md mx-auto text-center"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={stagger}
+      >
+        <motion.p variants={fadeUp} className="font-sans text-[10px] tracking-[0.4em] uppercase text-white/30 mb-6">
+          Newsletter
+        </motion.p>
+        <motion.h2 variants={fadeUp} className="font-serif text-3xl md:text-4xl font-light text-white mb-4 tracking-tight">
+          Stay in the know
+        </motion.h2>
+        <motion.p variants={fadeUp} className="font-sans text-[13px] text-white/35 font-light mb-10">
+          New scents, restocks, and limited drops.
+        </motion.p>
+        <motion.form variants={fadeUp} onSubmit={(e) => e.preventDefault()} className="flex gap-0">
           <input
             type="email"
-            placeholder="Your email"
-            className="flex-1 bg-transparent border border-cream/20 px-5 py-3.5 font-sans text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-gold transition-colors"
+            placeholder="Email address"
+            className="flex-1 bg-transparent border border-white/15 border-r-0 px-5 py-3.5 font-sans text-[12px] text-white placeholder:text-white/25 focus:outline-none focus:border-white/30 transition-colors"
           />
-          <button
+          <motion.button
             type="submit"
-            className="font-sans text-[12px] tracking-[0.2em] uppercase bg-gold text-charcoal px-8 py-3.5 hover:bg-gold-light transition-colors duration-300"
+            className="font-sans text-[10px] tracking-[0.2em] uppercase bg-white text-charcoal px-6 py-3.5 hover:bg-white/90 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             Subscribe
-          </button>
-        </form>
-      </div>
+          </motion.button>
+        </motion.form>
+      </motion.div>
     </section>
   )
 }
 
 function Footer() {
   return (
-    <footer className="py-10 px-6 bg-charcoal border-t border-cream/5">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        <span className="font-serif text-xl tracking-[0.2em] text-cream/60">LUMIERE</span>
-        <p className="font-sans text-[12px] text-cream/30">&copy; {new Date().getFullYear()} Lumiere. All rights reserved.</p>
+    <footer className="py-8 px-6 bg-charcoal border-t border-white/5">
+      <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+        <span className="font-sans text-[11px] tracking-[0.3em] text-white/25">LUMIERE</span>
+        <p className="font-sans text-[11px] text-white/15">&copy; {new Date().getFullYear()}</p>
       </div>
     </footer>
   )
@@ -226,16 +489,13 @@ function Footer() {
 
 export default function App() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-cream">
       <Nav />
       <Hero />
-      <section id="collection">
-        {candles.map((candle, i) => (
-          <CandleCard key={candle.id} candle={candle} index={i} />
-        ))}
-      </section>
-      <Features />
-      <Story />
+      <Collection />
+      <ProductDetail />
+      <Details />
+      <About />
       <Contact />
       <Footer />
     </div>
