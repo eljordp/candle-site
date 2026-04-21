@@ -1,0 +1,196 @@
+import { useRef, useEffect } from 'react'
+import { useParams, Link, useLocation } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { candles, productSpecs } from '../data'
+import { fadeUp, stagger, useCursorGlow, ScentJourney } from '../components'
+
+export default function Product() {
+  const { slug } = useParams()
+  const location = useLocation()
+  const candle = candles.find((c) => c.slug === slug)
+  const others = candles.filter((c) => c.slug !== slug)
+  const sectionRef = useRef(null)
+  const glow = useCursorGlow(sectionRef, candle?.glowColor)
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
+
+  if (!candle) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cream pt-16">
+        <div className="text-center">
+          <p className="font-serif text-4xl text-charcoal mb-4">Not Found</p>
+          <Link to="/" className="font-sans text-[11px] tracking-[0.2em] uppercase text-stone hover:text-charcoal transition-colors">
+            Back to Collection
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      {/* Product detail */}
+      <section
+        ref={sectionRef}
+        className="relative overflow-hidden pt-14 md:pt-16"
+        style={{ backgroundColor: candle.bg }}
+      >
+        {/* Cursor glow */}
+        <div
+          className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-500"
+          style={{ opacity: glow.visible ? 1 : 0 }}
+        >
+          <div
+            className="absolute w-[500px] h-[500px] rounded-full -translate-x-1/2 -translate-y-1/2"
+            style={{
+              left: glow.x,
+              top: glow.y,
+              background: `radial-gradient(circle, rgba(${candle.glowColor}, 0.06) 0%, transparent 70%)`,
+            }}
+          />
+        </div>
+
+        <div className="max-w-[1200px] mx-auto px-6 md:px-12 py-12 md:py-24 relative z-20">
+          {/* Breadcrumb */}
+          <motion.div
+            className="mb-8 md:mb-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <Link to="/" className="font-sans text-[10px] tracking-[0.15em] uppercase text-white/25 hover:text-white/50 transition-colors">
+              Home
+            </Link>
+            <span className="font-sans text-[10px] text-white/15 mx-2">/</span>
+            <span className="font-sans text-[10px] tracking-[0.15em] uppercase text-white/40">
+              {candle.name}
+            </span>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-10 md:gap-20 items-start">
+            {/* Mood image */}
+            <motion.div
+              className="relative overflow-hidden rounded-sm"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
+            >
+              <div className="relative aspect-[3/4]">
+                <img
+                  src={candle.moodImg}
+                  alt={candle.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                {candle.tag && (
+                  <div className="absolute top-5 left-5">
+                    <span className="font-sans text-[9px] tracking-[0.15em] uppercase text-white/80 bg-white/10 backdrop-blur-sm px-3 py-1.5 border border-white/10">
+                      {candle.tag}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Details */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={stagger}
+            >
+              <motion.p variants={fadeUp} className="font-sans text-[10px] tracking-[0.35em] uppercase text-white/30 mb-3">
+                {candle.subtitle}
+              </motion.p>
+              <motion.h1 variants={fadeUp} className="font-serif text-4xl md:text-6xl font-light text-white mb-3 tracking-tight">
+                {candle.name}
+              </motion.h1>
+              <motion.p variants={fadeUp} className="font-sans text-[15px] text-white/50 mb-8">
+                ${candle.price} — {candle.size}
+              </motion.p>
+              <motion.p variants={fadeUp} className="font-sans text-[14px] text-white/50 leading-relaxed mb-4 max-w-sm font-light">
+                {candle.description}
+              </motion.p>
+              <motion.p variants={fadeUp} className="font-sans text-[13px] text-white/35 leading-[1.8] mb-8 max-w-sm font-light">
+                {candle.story}
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="flex gap-6 mb-6 text-[11px]">
+                <div>
+                  <span className="font-sans text-white/25 tracking-[0.15em] uppercase">Mood</span>
+                  <p className="font-sans text-white/60 mt-1">{candle.mood}</p>
+                </div>
+                <div>
+                  <span className="font-sans text-white/25 tracking-[0.15em] uppercase">Season</span>
+                  <p className="font-sans text-white/60 mt-1">{candle.season}</p>
+                </div>
+              </motion.div>
+
+              <ScentJourney candle={candle} />
+
+              {/* Inline specs */}
+              <motion.div variants={fadeUp} className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-white/5 pt-6">
+                {productSpecs.map((spec) => (
+                  <div key={spec.label}>
+                    <p className="font-sans text-[9px] tracking-[0.2em] uppercase text-white/20">{spec.label}</p>
+                    <p className="font-sans text-[12px] text-white/50 mt-1 font-light">{spec.value}</p>
+                  </div>
+                ))}
+              </motion.div>
+
+              <motion.button
+                variants={fadeUp}
+                className="mt-10 w-full md:w-auto font-sans text-[11px] tracking-[0.2em] uppercase bg-white/10 text-white/80 px-12 py-4 border border-white/10 hover:bg-white/15 transition-all duration-500"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Add to Cart — ${candle.price}
+              </motion.button>
+              <motion.p variants={fadeUp} className="mt-4 font-sans text-[10px] text-white/20 font-light">
+                Free shipping on orders over $100 — 30-day returns
+              </motion.p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* You may also like */}
+      <section className="py-20 md:py-28 px-6 md:px-12 bg-cream">
+        <div className="max-w-[900px] mx-auto">
+          <motion.div
+            className="text-center mb-12 md:mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={stagger}
+          >
+            <motion.p variants={fadeUp} className="font-sans text-[10px] tracking-[0.4em] uppercase text-stone/50 mb-4">
+              You may also like
+            </motion.p>
+            <motion.div variants={fadeUp} className="w-8 h-[1px] bg-charcoal/15 mx-auto" />
+          </motion.div>
+          <div className="grid grid-cols-2 gap-6 md:gap-10">
+            {others.map((other) => (
+              <Link key={other.id} to={`/${other.slug}`} className="group block">
+                <div className="relative aspect-[3/4] mb-4 overflow-hidden rounded-sm" style={{ backgroundColor: other.bg }}>
+                  <img
+                    src={other.moodImg}
+                    alt={other.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
+                  <div className="absolute bottom-4 left-4">
+                    <p className="font-sans text-[10px] tracking-[0.25em] uppercase text-white/50 mb-1">{other.subtitle}</p>
+                    <p className="font-sans text-[13px] tracking-[0.15em] text-white/80 font-light">{other.name}</p>
+                  </div>
+                </div>
+                <p className="font-sans text-[13px] text-stone/70 text-center">${other.price}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}
