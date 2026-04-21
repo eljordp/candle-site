@@ -45,7 +45,7 @@ function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          LUMIERE
+          VELVET EMBER
         </motion.h1>
         <motion.p
           className="font-sans text-[13px] md:text-[14px] text-white/50 max-w-sm mx-auto leading-relaxed font-light"
@@ -156,7 +156,7 @@ function ProductCard({ candle, index }) {
                 className="w-28 h-32 md:w-32 md:h-36 rounded-sm border border-white/15 flex flex-col items-center justify-center backdrop-blur-sm"
                 style={{ backgroundColor: `${candle.labelBg}cc` }}
               >
-                <span className="font-sans text-[8px] tracking-[0.4em] text-white/30 mb-3">LUMIERE</span>
+                <span className="font-sans text-[8px] tracking-[0.4em] text-white/30 mb-3">VELVET EMBER</span>
                 <div className="w-8 h-[0.5px] bg-white/15 mb-3" />
                 <span className="font-sans text-[10px] md:text-[11px] tracking-[0.25em] text-white/85 font-light">{candle.name}</span>
                 <div className="w-8 h-[0.5px] bg-white/15 mt-3" />

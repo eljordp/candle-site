@@ -204,7 +204,7 @@ export default function Product() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/30" />
                     <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-                      <span className="font-sans text-[7px] tracking-[0.4em] text-white/30 mb-2">LUMIERE</span>
+                      <span className="font-sans text-[7px] tracking-[0.4em] text-white/30 mb-2">VELVET EMBER</span>
                       <div className="w-6 h-[0.5px] bg-white/15 mb-2" />
                       <span className="font-sans text-[10px] md:text-[11px] tracking-[0.25em] text-white/85 font-light">{other.name}</span>
                       <div className="w-6 h-[0.5px] bg-white/15 mt-2" />

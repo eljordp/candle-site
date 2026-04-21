@@ -72,7 +72,7 @@ export function CandleVisual({ candle, size = 'md', animate = true }) {
         className={`${s.jar} rounded-sm border border-white/10 flex flex-col items-center justify-center`}
         style={{ backgroundColor: candle.labelBg }}
       >
-        <span className={`font-sans ${s.brand} tracking-[0.4em] text-white/30 mb-4`}>LUMIERE</span>
+        <span className={`font-sans ${s.brand} tracking-[0.4em] text-white/30 mb-4`}>VELVET EMBER</span>
         <div className="w-10 h-[0.5px] bg-white/15 mb-4" />
         <span className={`font-sans ${s.text} tracking-[0.3em] text-white/85 font-light`}>{candle.name}</span>
         <div className="w-10 h-[0.5px] bg-white/15 mt-4" />
@@ -240,7 +240,7 @@ export function Nav() {
               to="/"
               className={`font-sans text-[13px] md:text-[14px] tracking-[0.3em] font-medium transition-colors duration-500 ${light ? 'text-charcoal' : 'text-white'}`}
             >
-              LUMIERE
+              VELVET EMBER
             </Link>
           </motion.div>
           <motion.div
@@ -361,7 +361,7 @@ export function Footer() {
       <div className="max-w-[1200px] mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
           <div className="col-span-2 md:col-span-1">
-            <Link to="/" className="font-sans text-[12px] tracking-[0.3em] text-white/40 block mb-4">LUMIERE</Link>
+            <Link to="/" className="font-sans text-[12px] tracking-[0.3em] text-white/40 block mb-4">VELVET EMBER</Link>
             <p className="font-sans text-[12px] text-white/20 leading-relaxed font-light max-w-[200px]">
               Iconic fragrances, hand-poured in small batches.
             </p>
@@ -394,7 +394,7 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="font-sans text-[10px] text-white/15">&copy; {new Date().getFullYear()} Lumiere. All rights reserved.</p>
+          <p className="font-sans text-[10px] text-white/15">&copy; {new Date().getFullYear()} Velvet Ember. All rights reserved.</p>
           <div className="flex gap-6">
             <span className="font-sans text-[10px] text-white/15">Privacy Policy</span>
             <span className="font-sans text-[10px] text-white/15">Terms of Service</span>
