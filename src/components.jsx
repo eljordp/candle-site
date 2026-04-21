@@ -83,12 +83,6 @@ export function CandleVisual({ candle, size = 'md', animate = true }) {
 }
 
 export function ScentJourney({ candle }) {
-  const layers = [
-    { label: 'Top', notes: candle.top, time: '0\u201330 min', opacity: 'text-white/90' },
-    { label: 'Heart', notes: candle.heart, time: '30 min\u20132 hr', opacity: 'text-white/70' },
-    { label: 'Base', notes: candle.base, time: '2 hr+', opacity: 'text-white/50' },
-  ]
-
   return (
     <motion.div
       className="mt-10"
@@ -97,35 +91,62 @@ export function ScentJourney({ candle }) {
       viewport={{ once: true }}
       variants={stagger}
     >
-      <motion.p variants={fadeUp} className="font-sans text-[10px] tracking-[0.3em] uppercase text-white/30 mb-6">
-        Scent Journey
-      </motion.p>
-      <div className="space-y-0">
-        {layers.map((layer, i) => (
-          <motion.div
-            key={layer.label}
-            variants={fadeUp}
-            custom={i * 0.1}
-            className="flex items-start gap-6 py-4 border-t border-white/5"
-          >
-            <div className="w-16 shrink-0">
-              <p className={`font-sans text-[11px] tracking-[0.15em] uppercase ${layer.opacity}`}>{layer.label}</p>
-              <p className="font-sans text-[9px] text-white/20 mt-1">{layer.time}</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {layer.notes.map((note) => (
-                <span
-                  key={note}
-                  className="font-sans text-[11px] text-white/60 border border-white/10 px-3 py-1.5 hover:border-white/25 transition-colors duration-300"
-                >
-                  {note}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-      <motion.div variants={fadeUp} className="mt-8 flex items-center gap-4">
+      {/* Fragrance Notes */}
+      <motion.div variants={fadeUp} className="mb-8">
+        <p className="font-sans text-[10px] tracking-[0.3em] uppercase text-white/30 mb-4">
+          Fragrance Notes
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {candle.notes.map((note) => (
+            <span
+              key={note}
+              className="font-sans text-[11px] text-white/60 border border-white/10 px-3 py-1.5 hover:border-white/25 transition-colors duration-300"
+            >
+              {note}
+            </span>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Throw */}
+      <motion.div variants={fadeUp} className="mb-8 border-t border-white/5 pt-6">
+        <p className="font-sans text-[10px] tracking-[0.3em] uppercase text-white/30 mb-4">
+          Throw
+        </p>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="font-sans text-[9px] tracking-[0.15em] uppercase text-white/20 mb-1.5">Cold</p>
+            <p className="font-sans text-[12px] text-white/55 font-light leading-relaxed">{candle.coldThrow}</p>
+          </div>
+          <div>
+            <p className="font-sans text-[9px] tracking-[0.15em] uppercase text-white/20 mb-1.5">Warm</p>
+            <p className="font-sans text-[12px] text-white/55 font-light leading-relaxed">{candle.warmThrow}</p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Best In + Pairs With */}
+      <motion.div variants={fadeUp} className="grid grid-cols-2 gap-4 border-t border-white/5 pt-6 mb-8">
+        <div>
+          <p className="font-sans text-[9px] tracking-[0.15em] uppercase text-white/20 mb-3">Best In</p>
+          <div className="flex flex-col gap-1.5">
+            {candle.bestIn.map((room) => (
+              <p key={room} className="font-sans text-[12px] text-white/55 font-light">{room}</p>
+            ))}
+          </div>
+        </div>
+        <div>
+          <p className="font-sans text-[9px] tracking-[0.15em] uppercase text-white/20 mb-3">Pairs With</p>
+          <div className="flex flex-col gap-1.5">
+            {candle.pairsWith.map((item) => (
+              <p key={item} className="font-sans text-[12px] text-white/55 font-light">{item}</p>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Intensity */}
+      <motion.div variants={fadeUp} className="flex items-center gap-4 border-t border-white/5 pt-6">
         <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-white/25">Intensity</p>
         <div className="flex gap-1.5">
           {[1, 2, 3, 4, 5].map((level) => (
@@ -147,9 +168,27 @@ export function ScentJourney({ candle }) {
   )
 }
 
+function NavScrollLink({ to, children, className, isHome }) {
+  const navigate = useLocation().pathname === '/' ? null : to
+  const handleClick = (e) => {
+    const hash = to.replace('/', '')
+    if (isHome) {
+      e.preventDefault()
+      const el = document.querySelector(hash)
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+  return (
+    <Link to={to} onClick={handleClick} className={className}>
+      {children}
+    </Link>
+  )
+}
+
 export function Nav() {
   const { scrollY } = useScroll()
   const [scrolled, setScrolled] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
   const isHome = location.pathname === '/'
 
@@ -157,6 +196,24 @@ export function Nav() {
     const unsubscribe = scrollY.on('change', (v) => setScrolled(v > 80))
     return unsubscribe
   }, [scrollY])
+
+  useEffect(() => {
+    if (isHome && location.hash) {
+      const el = document.querySelector(location.hash)
+      if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100)
+    }
+  }, [location, isHome])
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [location.pathname])
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [mobileOpen])
 
   const navBg = useTransform(
     scrollY,
@@ -168,53 +225,139 @@ export function Nav() {
   const light = !isHome || scrolled
 
   return (
-    <motion.nav
-      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md"
-      style={{ backgroundColor: navBg, borderBottom: useTransform(borderOp, (v) => `1px solid rgba(26,26,26,${v})`) }}
-    >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex items-center justify-between h-14 md:h-16">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.2 }}
-        >
-          <Link
-            to="/"
-            className={`font-sans text-[13px] md:text-[14px] tracking-[0.3em] font-medium transition-colors duration-500 ${light ? 'text-charcoal' : 'text-white'}`}
+    <>
+      <motion.nav
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md"
+        style={{ backgroundColor: navBg, borderBottom: useTransform(borderOp, (v) => `1px solid rgba(26,26,26,${v})`) }}
+      >
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex items-center justify-between h-14 md:h-16">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.2 }}
           >
-            LUMIERE
-          </Link>
-        </motion.div>
-        <motion.div
-          className={`hidden md:flex items-center gap-10 font-sans text-[11px] tracking-[0.15em] uppercase transition-colors duration-500 ${light ? 'text-stone' : 'text-white/70'}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.4 }}
-        >
-          <Link to="/#collection" className={`transition-colors duration-500 ${light ? 'hover:text-charcoal' : 'hover:text-white'}`}>Collection</Link>
-          <Link to="/#about" className={`transition-colors duration-500 ${light ? 'hover:text-charcoal' : 'hover:text-white'}`}>About</Link>
-          <Link to="/bundle" className={`transition-colors duration-500 ${light ? 'hover:text-charcoal' : 'hover:text-white'}`}>The Ritual</Link>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.6 }}
-        >
-          <Link
-            to="/#collection"
-            className={`font-sans text-[10px] tracking-[0.2em] uppercase transition-colors duration-500 ${light ? 'text-charcoal hover:text-stone' : 'text-white/80 hover:text-white'}`}
+            <Link
+              to="/"
+              className={`font-sans text-[13px] md:text-[14px] tracking-[0.3em] font-medium transition-colors duration-500 ${light ? 'text-charcoal' : 'text-white'}`}
+            >
+              LUMIERE
+            </Link>
+          </motion.div>
+          <motion.div
+            className={`hidden md:flex items-center gap-10 font-sans text-[11px] tracking-[0.15em] uppercase transition-colors duration-500 ${light ? 'text-stone' : 'text-white/70'}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.4 }}
           >
-            Shop
-          </Link>
-        </motion.div>
-      </div>
-    </motion.nav>
+            <NavScrollLink to="/#collection" isHome={isHome} className={`transition-colors duration-500 ${light ? 'hover:text-charcoal' : 'hover:text-white'}`}>Collection</NavScrollLink>
+            <NavScrollLink to="/#about" isHome={isHome} className={`transition-colors duration-500 ${light ? 'hover:text-charcoal' : 'hover:text-white'}`}>About</NavScrollLink>
+            <Link to="/bundle" className={`transition-colors duration-500 ${light ? 'hover:text-charcoal' : 'hover:text-white'}`}>The Ritual</Link>
+          </motion.div>
+          <div className="flex items-center gap-4">
+            <motion.div
+              className="hidden md:block"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.6 }}
+            >
+              <NavScrollLink
+                to="/#collection"
+                isHome={isHome}
+                className={`font-sans text-[10px] tracking-[0.2em] uppercase transition-colors duration-500 ${light ? 'text-charcoal hover:text-stone' : 'text-white/80 hover:text-white'}`}
+              >
+                Shop
+              </NavScrollLink>
+            </motion.div>
+            {/* Hamburger — mobile only */}
+            <button
+              className="md:hidden flex flex-col gap-[5px] p-1"
+              onClick={() => setMobileOpen((o) => !o)}
+              aria-label="Toggle menu"
+            >
+              <motion.span
+                className={`block w-5 h-[1px] transition-colors duration-500 ${light ? 'bg-charcoal' : 'bg-white'}`}
+                animate={mobileOpen ? { rotate: 45, y: 3 } : { rotate: 0, y: 0 }}
+                transition={{ duration: 0.3 }}
+              />
+              <motion.span
+                className={`block w-5 h-[1px] transition-colors duration-500 ${light ? 'bg-charcoal' : 'bg-white'}`}
+                animate={mobileOpen ? { rotate: -45, y: -3 } : { rotate: 0, y: 0 }}
+                transition={{ duration: 0.3 }}
+              />
+            </button>
+          </div>
+        </div>
+      </motion.nav>
+
+      {/* Mobile menu overlay */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            className="fixed inset-0 z-40 bg-charcoal flex flex-col items-center justify-center gap-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            {[
+              { to: '/#collection', label: 'Collection', isScroll: true },
+              { to: '/#about', label: 'About', isScroll: true },
+              { to: '/bundle', label: 'The Ritual', isScroll: false },
+            ].map((item, i) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ delay: 0.1 + i * 0.08, duration: 0.4 }}
+              >
+                {item.isScroll ? (
+                  <NavScrollLink
+                    to={item.to}
+                    isHome={isHome}
+                    className="font-sans text-[14px] tracking-[0.3em] uppercase text-white/70 hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </NavScrollLink>
+                ) : (
+                  <Link
+                    to={item.to}
+                    className="font-sans text-[14px] tracking-[0.3em] uppercase text-white/70 hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                )}
+              </motion.div>
+            ))}
+            <motion.div
+              className="w-8 h-[1px] bg-gold/30 mt-4"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <NavScrollLink
+                to="/#collection"
+                isHome={isHome}
+                className="font-sans text-[11px] tracking-[0.2em] uppercase text-gold/60 hover:text-gold transition-colors"
+              >
+                Shop Now
+              </NavScrollLink>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 
 export function Footer() {
   return (
-    <footer className="py-14 md:py-20 px-6 md:px-12 bg-charcoal border-t border-white/5">
+    <footer className="py-14 md:py-20 px-6 md:px-12 bg-charcoal border-t border-gold/10">
       <div className="max-w-[1200px] mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
           <div className="col-span-2 md:col-span-1">

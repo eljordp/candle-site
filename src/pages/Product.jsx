@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react'
 import { useParams, Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { candles, productSpecs } from '../data'
-import { fadeUp, stagger, useCursorGlow, ScentJourney } from '../components'
+import { fadeUp, stagger, useCursorGlow, ScentJourney, CandleVisual } from '../components'
 
 export default function Product() {
   const { slug } = useParams()
@@ -70,7 +70,7 @@ export default function Product() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-10 md:gap-20 items-start">
-            {/* Mood image */}
+            {/* Mood image with candle overlay */}
             <motion.div
               className="relative overflow-hidden rounded-sm"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -83,14 +83,17 @@ export default function Product() {
                   alt={candle.name}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-black/10" />
                 {candle.tag && (
-                  <div className="absolute top-5 left-5">
+                  <div className="absolute top-5 left-5 z-20">
                     <span className="font-sans text-[9px] tracking-[0.15em] uppercase text-white/80 bg-white/10 backdrop-blur-sm px-3 py-1.5 border border-white/10">
                       {candle.tag}
                     </span>
                   </div>
                 )}
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <CandleVisual candle={candle} size="md" animate={true} />
+                </div>
               </div>
             </motion.div>
 
@@ -170,22 +173,48 @@ export default function Product() {
             </motion.p>
             <motion.div variants={fadeUp} className="w-8 h-[1px] bg-charcoal/15 mx-auto" />
           </motion.div>
-          <div className="grid grid-cols-2 gap-6 md:gap-10">
+          <div className="flex justify-center gap-8 md:gap-14">
             {others.map((other) => (
               <Link key={other.id} to={`/${other.slug}`} className="group block">
-                <div className="relative aspect-[3/4] mb-4 overflow-hidden rounded-sm" style={{ backgroundColor: other.bg }}>
-                  <img
-                    src={other.moodImg}
-                    alt={other.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
-                  <div className="absolute bottom-4 left-4">
-                    <p className="font-sans text-[10px] tracking-[0.25em] uppercase text-white/50 mb-1">{other.subtitle}</p>
-                    <p className="font-sans text-[13px] tracking-[0.15em] text-white/80 font-light">{other.name}</p>
-                  </div>
+                <div className="flex flex-col items-center">
+                  {/* Flame */}
+                  <motion.div
+                    className="mb-[-2px] z-10"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <div className="w-2 h-5 bg-gradient-to-t from-amber-500 via-orange-300 to-yellow-100 rounded-full blur-[0.5px]" />
+                  </motion.div>
+                  {/* Wick */}
+                  <div className="w-[1px] h-3 bg-stone/40 mb-[-1px] z-10" />
+                  {/* Candle jar card — 14oz tumbler shape */}
+                  <motion.div
+                    className="relative w-40 h-44 md:w-52 md:h-56 overflow-hidden"
+                    style={{
+                      borderRadius: '30% 30% 6% 6% / 18% 18% 4% 4%',
+                      backgroundColor: other.bg,
+                    }}
+                    whileHover={{ y: -6 }}
+                    transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                  >
+                    <img
+                      src={other.altImg}
+                      alt={other.name}
+                      className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-105 transition-all duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/30" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+                      <span className="font-sans text-[7px] tracking-[0.4em] text-white/30 mb-2">LUMIERE</span>
+                      <div className="w-6 h-[0.5px] bg-white/15 mb-2" />
+                      <span className="font-sans text-[10px] md:text-[11px] tracking-[0.25em] text-white/85 font-light">{other.name}</span>
+                      <div className="w-6 h-[0.5px] bg-white/15 mt-2" />
+                    </div>
+                  </motion.div>
                 </div>
-                <p className="font-sans text-[13px] text-stone/70 text-center">${other.price}</p>
+                <div className="text-center mt-4">
+                  <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-stone/45 mb-1">{other.subtitle}</p>
+                  <p className="font-sans text-[12px] text-stone/65">${other.price}</p>
+                </div>
               </Link>
             ))}
           </div>

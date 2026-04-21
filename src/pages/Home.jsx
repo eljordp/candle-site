@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { useState, useRef } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { candles } from '../data'
 import { fadeUp, stagger } from '../components'
@@ -16,6 +16,14 @@ function Hero() {
         <img src="/images/hero.jpg" alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/70" />
       </motion.div>
+
+      {/* Warm golden ambient glow behind title */}
+      <div className="absolute inset-0 z-[1] flex items-center justify-center pointer-events-none">
+        <div className="w-[600px] h-[400px] rounded-full bg-gradient-radial from-amber-500/8 via-amber-700/4 to-transparent blur-3xl animate-glow-pulse"
+          style={{ background: 'radial-gradient(ellipse, rgba(196,168,124,0.12) 0%, rgba(196,168,124,0.04) 40%, transparent 70%)' }}
+        />
+      </div>
+
       <motion.div className="text-center relative z-10" style={{ y }}>
         <motion.div
           className="w-12 h-[1px] bg-white/30 mx-auto mb-10"
@@ -54,12 +62,48 @@ function Hero() {
           transition={{ duration: 1.2, delay: 1.3, ease: [0.25, 0.1, 0.25, 1] }}
         />
       </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 2 }}
+      >
+        <span className="font-sans text-[8px] tracking-[0.4em] uppercase text-white/30">Scroll</span>
+        <div className="animate-gentle-bounce">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 6L8 10L12 6" stroke="rgba(255,255,255,0.4)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+      </motion.div>
     </motion.section>
+  )
+}
+
+function Marquee() {
+  const items = ['SAUVAGE', 'ROUGE', 'GUILTY', 'HAND-POURED', 'SOY WAX', 'SMALL BATCH', 'LUXURY SCENTS', 'COTTON WICK']
+  const repeated = [...items, ...items]
+
+  return (
+    <div className="py-6 md:py-8 bg-charcoal overflow-hidden border-y border-white/5">
+      <div className="animate-marquee flex items-center whitespace-nowrap" style={{ width: 'max-content' }}>
+        {repeated.map((item, i) => (
+          <span key={i} className="flex items-center">
+            <span className="font-sans text-[10px] md:text-[11px] tracking-[0.4em] uppercase text-white/20 mx-6 md:mx-10">
+              {item}
+            </span>
+            <span className="w-1 h-1 rounded-full bg-gold/30" />
+          </span>
+        ))}
+      </div>
+    </div>
   )
 }
 
 function ProductCard({ candle, index }) {
   const [hovered, setHovered] = useState(false)
+  const cardRef = useRef(null)
 
   return (
     <motion.div
@@ -72,6 +116,7 @@ function ProductCard({ candle, index }) {
     >
       <Link
         to={`/${candle.slug}`}
+        ref={cardRef}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
@@ -92,7 +137,16 @@ function ProductCard({ candle, index }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
 
-          <div className="absolute inset-0 flex items-center justify-center">
+          {/* Warm glow on hover */}
+          <div
+            className="absolute inset-0 transition-opacity duration-700 pointer-events-none z-[1]"
+            style={{
+              opacity: hovered ? 1 : 0,
+              background: `radial-gradient(ellipse at center 70%, rgba(${candle.glowColor}, 0.15) 0%, transparent 60%)`,
+            }}
+          />
+
+          <div className="absolute inset-0 flex items-center justify-center z-10">
             <motion.div
               className="relative"
               animate={{ y: hovered ? -8 : 0 }}
@@ -111,21 +165,22 @@ function ProductCard({ candle, index }) {
             </motion.div>
           </div>
 
-          <AnimatePresence>
-            {hovered && (
-              <motion.div
-                className="absolute bottom-0 left-0 right-0 p-4"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.3 }}
-              >
-                <span className="block w-full font-sans text-[10px] tracking-[0.2em] uppercase text-center text-white/70 py-3">
-                  View Details
+          {/* Fragrance info — always visible on mobile, hover-only on desktop */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 bg-gradient-to-t from-black/90 via-black/70 to-transparent md:opacity-0 md:translate-y-2 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 z-10">
+            <div className="flex flex-wrap gap-1.5 mb-2 md:mb-3">
+              {candle.notes.slice(0, 4).map((note) => (
+                <span key={note} className="font-sans text-[8px] md:text-[9px] text-white/60 border border-white/15 px-1.5 md:px-2 py-0.5 md:py-1">
+                  {note}
                 </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              ))}
+            </div>
+            <p className="font-sans text-[8px] md:text-[9px] text-white/35 mb-0.5 md:mb-1">
+              <span className="text-white/20 uppercase tracking-[0.1em]">Warm: </span>{candle.warmThrow}
+            </p>
+            <p className="font-sans text-[8px] md:text-[9px] text-white/35">
+              <span className="text-white/20 uppercase tracking-[0.1em]">Mood: </span>{candle.mood}
+            </p>
+          </div>
         </div>
 
         <div className="text-center">
@@ -140,8 +195,11 @@ function ProductCard({ candle, index }) {
 
 function Collection() {
   return (
-    <section id="collection" className="py-24 md:py-36 px-6 md:px-12 bg-cream">
-      <div className="max-w-[1200px] mx-auto">
+    <section id="collection" className="py-24 md:py-36 px-6 md:px-12 bg-cream relative">
+      {/* Subtle warm gradient at top */}
+      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-warm/60 to-transparent pointer-events-none" />
+
+      <div className="max-w-[1200px] mx-auto relative">
         <motion.div
           className="text-center mb-16 md:mb-24"
           initial="hidden"
@@ -152,7 +210,7 @@ function Collection() {
           <motion.p className="font-sans text-[10px] tracking-[0.4em] uppercase text-stone/50 mb-4" variants={fadeUp}>
             The Collection
           </motion.p>
-          <motion.div className="w-8 h-[1px] bg-charcoal/15 mx-auto" variants={fadeUp} />
+          <motion.div className="w-8 h-[1px] bg-gold/30 mx-auto" variants={fadeUp} />
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {candles.map((candle, i) => (
@@ -168,7 +226,7 @@ function Collection() {
           viewport={{ once: true }}
           variants={stagger}
         >
-          <motion.div variants={fadeUp} className="w-8 h-[1px] bg-charcoal/15 mx-auto mb-6" />
+          <motion.div variants={fadeUp} className="w-8 h-[1px] bg-gold/30 mx-auto mb-6" />
           <motion.p variants={fadeUp} className="font-sans text-[13px] text-stone/50 font-light mb-4">
             Get all three for $155
           </motion.p>
@@ -186,18 +244,106 @@ function Collection() {
   )
 }
 
-function About() {
+function TheCraft() {
+  const crafts = [
+    {
+      number: '01',
+      title: 'Hand-Poured',
+      desc: 'Every candle is poured by hand in small batches — no machines, no mass production.',
+    },
+    {
+      number: '02',
+      title: 'Premium Soy Wax',
+      desc: '100% natural soy for a clean, even burn that lasts 60+ hours.',
+    },
+    {
+      number: '03',
+      title: 'Cotton Wicks',
+      desc: 'Lead-free cotton wicks for a steady, soot-free flame every time.',
+    },
+    {
+      number: '04',
+      title: 'Iconic Scents',
+      desc: 'Inspired by the fragrances you already love — translated into candle form.',
+    },
+  ]
+
   return (
-    <section id="about" className="py-24 md:py-36 px-6 bg-cream">
+    <section className="py-24 md:py-36 px-6 md:px-12 bg-warm relative overflow-hidden">
+      {/* Background texture — subtle warm gradient */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(196,168,124,0.06) 0%, transparent 50%)' }} />
+
+      <div className="max-w-[1100px] mx-auto relative">
+        <motion.div
+          className="text-center mb-16 md:mb-24"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={stagger}
+        >
+          <motion.p variants={fadeUp} className="font-sans text-[10px] tracking-[0.4em] uppercase text-stone/50 mb-4">
+            The Craft
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="font-serif text-3xl md:text-5xl font-light text-charcoal tracking-tight mb-4">
+            Made with intention
+          </motion.h2>
+          <motion.div variants={fadeUp} className="w-12 h-[1px] bg-gold/40 mx-auto" />
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12 md:gap-y-16">
+          {crafts.map((craft, i) => (
+            <motion.div
+              key={craft.number}
+              className="flex gap-6 items-start"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+            >
+              <span className="font-serif text-3xl md:text-4xl font-light text-gold/40 leading-none mt-1 shrink-0">
+                {craft.number}
+              </span>
+              <div>
+                <h3 className="font-sans text-[13px] tracking-[0.15em] uppercase text-charcoal mb-2">{craft.title}</h3>
+                <div className="w-6 h-[1px] bg-gold/30 mb-3" />
+                <p className="font-sans text-[13px] text-stone/60 leading-[1.8] font-light">{craft.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function About() {
+  const imgRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: imgRef,
+    offset: ['start end', 'end start'],
+  })
+  const imgY = useTransform(scrollYProgress, [0, 1], [40, -40])
+
+  return (
+    <section id="about" className="py-24 md:py-36 px-6 bg-cream overflow-hidden">
       <div className="max-w-[1100px] mx-auto grid md:grid-cols-2 gap-12 md:gap-20 items-center">
         <motion.div
+          ref={imgRef}
           className="relative aspect-[4/3] md:aspect-[4/5] overflow-hidden"
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          <img src="/images/lifestyle.jpg" alt="Hand-poured candle" className="w-full h-full object-cover" />
+          <motion.img
+            src="/images/lifestyle.jpg"
+            alt="Hand-poured candle"
+            className="w-full h-full object-cover"
+            style={{ y: imgY }}
+          />
+          {/* Gold accent border */}
+          <div className="absolute bottom-0 left-0 w-16 h-[1px] bg-gold/40" />
+          <div className="absolute bottom-0 left-0 w-[1px] h-16 bg-gold/40" />
         </motion.div>
         <motion.div
           className="text-center md:text-left"
@@ -209,7 +355,7 @@ function About() {
           <motion.p variants={fadeUp} className="font-sans text-[10px] tracking-[0.4em] uppercase text-stone/50 mb-6">
             Our Philosophy
           </motion.p>
-          <motion.div variants={fadeUp} className="w-8 h-[1px] bg-charcoal/15 mb-10" />
+          <motion.div variants={fadeUp} className="w-8 h-[1px] bg-gold/40 mb-10" />
           <motion.p variants={fadeUp} className="font-sans text-[14px] text-stone/60 leading-[1.9] font-light mb-8">
             We believe the fragrances you love shouldn't disappear when you leave the room.
             Each candle is hand-poured in small batches using premium soy wax and cotton wicks.
@@ -217,7 +363,7 @@ function About() {
           <motion.p variants={fadeUp} className="font-sans text-[14px] text-stone/60 leading-[1.9] font-light">
             No shortcuts. No synthetics. Just clean-burning, long-lasting luxury.
           </motion.p>
-          <motion.div variants={fadeUp} className="w-8 h-[1px] bg-charcoal/15 mt-10" />
+          <motion.div variants={fadeUp} className="w-8 h-[1px] bg-gold/40 mt-10" />
         </motion.div>
       </div>
     </section>
@@ -231,6 +377,9 @@ function Contact() {
         <img src="/images/smoke.jpg" alt="" className="w-full h-full object-cover opacity-15" />
         <div className="absolute inset-0 bg-charcoal/80" />
       </div>
+      {/* Warm ambient glow */}
+      <div className="absolute inset-0 z-[1] pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(196,168,124,0.06) 0%, transparent 60%)' }} />
+
       <motion.div
         className="max-w-md mx-auto text-center relative z-10"
         initial="hidden"
@@ -251,11 +400,11 @@ function Contact() {
           <input
             type="email"
             placeholder="Email address"
-            className="flex-1 bg-transparent border border-white/15 sm:border-r-0 px-5 py-3.5 font-sans text-[12px] text-white placeholder:text-white/25 focus:outline-none focus:border-white/30 transition-colors"
+            className="flex-1 bg-transparent border border-white/15 sm:border-r-0 px-5 py-3.5 font-sans text-[12px] text-white placeholder:text-white/25 focus:outline-none focus:border-gold/40 transition-colors"
           />
           <motion.button
             type="submit"
-            className="font-sans text-[10px] tracking-[0.2em] uppercase bg-white text-charcoal px-6 py-3.5 hover:bg-white/90 transition-colors"
+            className="font-sans text-[10px] tracking-[0.2em] uppercase bg-white text-charcoal px-6 py-3.5 hover:bg-gold-light transition-colors duration-500"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -271,7 +420,9 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <Marquee />
       <Collection />
+      <TheCraft />
       <About />
       <Contact />
     </>
