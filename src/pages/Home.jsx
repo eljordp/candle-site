@@ -24,7 +24,7 @@ function Hero() {
       <motion.div className="text-center relative z-10 flex flex-col items-center" style={{ y }}>
         {/* Flame — 4K video loop, pure black bg so no blend mode needed */}
         <motion.div
-          className="relative mb-8 md:mb-10 w-48 h-72 md:w-64 md:h-96"
+          className="relative mb-6 md:mb-8 w-36 h-52 md:w-44 md:h-60"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 2.2, delay: 0.2, ease: 'easeOut' }}
