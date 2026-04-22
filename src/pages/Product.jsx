@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react'
 import { useParams, Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { candles, productSpecs } from '../data'
-import { fadeUp, stagger, useCursorGlow, ScentJourney, CandleVisual, useSplitTextReveal, useMaskReveal } from '../components'
+import { fadeUp, stagger, useCursorGlow, ScentJourney, useSplitTextReveal, useMaskReveal } from '../components'
 
 export default function Product() {
   const { slug } = useParams()
@@ -90,21 +90,24 @@ export default function Product() {
             >
               <div className="relative aspect-[3/4]">
                 <img
-                  src={candle.moodImg}
+                  src={candle.productImg}
                   alt={candle.name}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-black/10" />
+                {/* Warm ambient wash from glass */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(ellipse at center 55%, rgba(${candle.glowColor}, 0.12) 0%, transparent 65%)`,
+                  }}
+                />
                 {candle.tag && (
                   <div className="absolute top-5 left-5 z-20">
-                    <span className="font-sans text-[9px] tracking-[0.15em] uppercase text-white/80 bg-white/10 backdrop-blur-sm px-3 py-1.5 border border-white/10">
+                    <span className="font-sans text-[9px] tracking-[0.15em] uppercase text-white/90 bg-black/30 backdrop-blur-sm px-3 py-1.5 border border-white/15">
                       {candle.tag}
                     </span>
                   </div>
                 )}
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <CandleVisual candle={candle} size="md" animate={true} />
-                </div>
               </div>
             </div>
 

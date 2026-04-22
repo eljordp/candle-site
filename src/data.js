@@ -22,6 +22,7 @@ export const candles = [
     glowColor: '147, 197, 253',
     moodImg: '/images/sauvage-mood.jpg',
     altImg: '/images/blue-mood.jpg',
+    productImg: '/images/sauvage-candle.jpg',
   },
   {
     id: 2,
@@ -46,6 +47,7 @@ export const candles = [
     glowColor: '253, 164, 175',
     moodImg: '/images/red-rose.jpg',
     altImg: '/images/candle-warm.jpg',
+    productImg: '/images/rouge-candle.jpg',
   },
   {
     id: 3,
@@ -70,6 +72,7 @@ export const candles = [
     glowColor: '217, 194, 160',
     moodImg: '/images/guilty-mood.jpg',
     altImg: '/images/earth-mood.jpg',
+    productImg: '/images/guilty-candle.jpg',
   },
 ]
 

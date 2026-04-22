@@ -195,57 +195,55 @@ function ProductCard({ candle, index }) {
               </span>
             </div>
           )}
+
+          {/* Mood layer — lifestyle scenery beneath, revealed on hover */}
           <motion.img
             src={candle.moodImg}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover"
+            animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1.04 : 1.08 }}
+            transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+          />
+
+          {/* Product shot — hero state */}
+          <motion.img
+            src={candle.productImg}
             alt={candle.name}
             className="absolute inset-0 w-full h-full object-cover"
-            animate={{ scale: hovered ? 1.05 : 1 }}
-            transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+            animate={{ opacity: hovered ? 0 : 1, scale: hovered ? 1.03 : 1 }}
+            transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
 
-          {/* Warm glow on hover */}
+          {/* Warm glow — stronger on hover */}
           <div
             className="absolute inset-0 transition-opacity duration-700 pointer-events-none z-[1]"
             style={{
-              opacity: hovered ? 1 : 0,
-              background: `radial-gradient(ellipse at center 70%, rgba(${candle.glowColor}, 0.15) 0%, transparent 60%)`,
+              opacity: hovered ? 1 : 0.35,
+              background: `radial-gradient(ellipse at center 60%, rgba(${candle.glowColor}, 0.18) 0%, transparent 65%)`,
             }}
           />
 
-          <div className="absolute inset-0 flex items-center justify-center z-10">
-            <motion.div
-              className="relative"
-              animate={{ y: hovered ? -8 : 0 }}
-              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-            >
-              <div
-                className="w-28 h-32 md:w-32 md:h-36 rounded-sm border border-white/15 flex flex-col items-center justify-center backdrop-blur-sm"
-                style={{ backgroundColor: `${candle.labelBg}cc` }}
-              >
-                <span className="font-sans text-[8px] tracking-[0.4em] text-white/30 mb-3">VELVET EMBER</span>
-                <div className="w-8 h-[0.5px] bg-white/15 mb-3" />
-                <span className="font-sans text-[10px] md:text-[11px] tracking-[0.25em] text-white/85 font-light">{candle.name}</span>
-                <div className="w-8 h-[0.5px] bg-white/15 mt-3" />
-                <span className="font-sans text-[7px] tracking-[0.3em] text-white/25 mt-3">{candle.size}</span>
-              </div>
-            </motion.div>
-          </div>
+          {/* Darken overlay on hover so notes/mood text is legible */}
+          <div
+            className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent transition-opacity duration-500 z-[2] pointer-events-none"
+            style={{ opacity: hovered ? 1 : 0 }}
+          />
 
           {/* Fragrance info — always visible on mobile, hover-only on desktop */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 bg-gradient-to-t from-black/90 via-black/70 to-transparent md:opacity-0 md:translate-y-2 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 z-10">
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 md:opacity-0 md:translate-y-2 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 z-10">
             <div className="flex flex-wrap gap-1.5 mb-2 md:mb-3">
               {candle.notes.slice(0, 4).map((note) => (
-                <span key={note} className="font-sans text-[8px] md:text-[9px] text-white/60 border border-white/15 px-1.5 md:px-2 py-0.5 md:py-1">
+                <span key={note} className="font-sans text-[8px] md:text-[9px] text-white/70 border border-white/20 bg-black/30 backdrop-blur-sm px-1.5 md:px-2 py-0.5 md:py-1">
                   {note}
                 </span>
               ))}
             </div>
-            <p className="font-sans text-[8px] md:text-[9px] text-white/35 mb-0.5 md:mb-1">
-              <span className="text-white/20 uppercase tracking-[0.1em]">Warm: </span>{candle.warmThrow}
+            <p className="font-sans text-[8px] md:text-[9px] text-white/45 mb-0.5 md:mb-1">
+              <span className="text-white/25 uppercase tracking-[0.1em]">Warm: </span>{candle.warmThrow}
             </p>
-            <p className="font-sans text-[8px] md:text-[9px] text-white/35">
-              <span className="text-white/20 uppercase tracking-[0.1em]">Mood: </span>{candle.mood}
+            <p className="font-sans text-[8px] md:text-[9px] text-white/45">
+              <span className="text-white/25 uppercase tracking-[0.1em]">Mood: </span>{candle.mood}
             </p>
           </div>
         </div>
