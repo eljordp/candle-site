@@ -48,7 +48,7 @@ export default function Bundle() {
             </Link>
             <span className="font-sans text-[10px] text-stone/20 mx-2">/</span>
             <span className="font-sans text-[10px] tracking-[0.15em] uppercase text-stone/60">
-              The Ritual
+              The Rotation
             </span>
           </motion.div>
 
@@ -65,7 +65,7 @@ export default function Bundle() {
               ref={headlineRef}
               className="font-serif text-4xl md:text-6xl font-light text-charcoal tracking-tight mb-4 overflow-hidden"
             >
-              The Ritual
+              The Rotation
             </h1>
             <motion.p variants={fadeUp} className="font-sans text-[13px] text-stone/50 font-light max-w-md mx-auto leading-relaxed">
               Select your favourites. Get all three for $155 and save.

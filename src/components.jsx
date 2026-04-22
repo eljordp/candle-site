@@ -328,7 +328,7 @@ export function Nav() {
           >
             <NavScrollLink to="/#collection" isHome={isHome} className={`transition-colors duration-500 ${light ? 'hover:text-charcoal' : 'hover:text-white'}`}>Collection</NavScrollLink>
             <NavScrollLink to="/#about" isHome={isHome} className={`transition-colors duration-500 ${light ? 'hover:text-charcoal' : 'hover:text-white'}`}>About</NavScrollLink>
-            <Link to="/bundle" className={`transition-colors duration-500 ${light ? 'hover:text-charcoal' : 'hover:text-white'}`}>The Ritual</Link>
+            <Link to="/bundle" className={`transition-colors duration-500 ${light ? 'hover:text-charcoal' : 'hover:text-white'}`}>The Rotation</Link>
           </motion.div>
           <div className="flex items-center gap-4">
             <motion.div
@@ -379,7 +379,7 @@ export function Nav() {
             {[
               { to: '/#collection', label: 'Collection', isScroll: true },
               { to: '/#about', label: 'About', isScroll: true },
-              { to: '/bundle', label: 'The Ritual', isScroll: false },
+              { to: '/bundle', label: 'The Rotation', isScroll: false },
             ].map((item, i) => (
               <motion.div
                 key={item.label}
@@ -449,7 +449,7 @@ export function Footer() {
               <Link to="/sauvage" className="font-sans text-[12px] text-white/20 hover:text-white/50 transition-colors font-light">Sauvage</Link>
               <Link to="/rouge" className="font-sans text-[12px] text-white/20 hover:text-white/50 transition-colors font-light">Rouge</Link>
               <Link to="/guilty" className="font-sans text-[12px] text-white/20 hover:text-white/50 transition-colors font-light">Guilty</Link>
-              <Link to="/bundle" className="font-sans text-[12px] text-white/20 hover:text-white/50 transition-colors font-light">The Ritual</Link>
+              <Link to="/bundle" className="font-sans text-[12px] text-white/20 hover:text-white/50 transition-colors font-light">The Rotation</Link>
             </div>
           </div>
           <div>
