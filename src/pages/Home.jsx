@@ -34,10 +34,11 @@ function Hero() {
       <motion.div className="text-center relative z-10 flex flex-col items-center" style={{ y }}>
         {/* Flame — 4K video loop */}
         <motion.div
-          className="relative mb-8 md:mb-10 w-40 h-56 md:w-56 md:h-80"
-          initial={{ opacity: 0, scale: 0.6 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+          className="relative mb-8 md:mb-10 w-48 h-72 md:w-64 md:h-96"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2.2, delay: 0.2, ease: 'easeOut' }}
+          style={{ mixBlendMode: 'lighten' }}
         >
           <video
             poster="/video/flame-poster.jpg"
@@ -46,8 +47,7 @@ function Hero() {
             muted
             playsInline
             preload="auto"
-            className="absolute inset-0 w-full h-full object-contain"
-            style={{ mixBlendMode: 'screen' }}
+            className="absolute inset-0 w-full h-full object-cover"
           >
             <source src="/video/flame-1440.webm" type="video/webm" />
             <source src="/video/flame-1440.mp4" type="video/mp4" />
