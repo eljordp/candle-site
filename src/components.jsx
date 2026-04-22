@@ -1,6 +1,83 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { Link, useLocation } from 'react-router-dom'
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
+import SplitType from 'split-type'
+
+gsap.registerPlugin(ScrollTrigger)
+
+export function useSplitTextReveal(ref, options = {}) {
+  const {
+    by = 'chars',
+    stagger = 0.03,
+    duration = 1,
+    ease = 'power3.out',
+    delay = 0,
+    scrollTrigger = true,
+    deps = [],
+  } = options
+
+  useEffect(() => {
+    if (!ref.current) return
+    const split = new SplitType(ref.current, { types: 'chars,words,lines' })
+    const target =
+      by === 'words' ? split.words : by === 'lines' ? split.lines : split.chars
+    if (!target || target.length === 0) return
+
+    gsap.set(target, { yPercent: 110, opacity: 0 })
+
+    const tween = gsap.to(target, {
+      yPercent: 0,
+      opacity: 1,
+      stagger,
+      duration,
+      ease,
+      delay,
+      scrollTrigger: scrollTrigger
+        ? { trigger: ref.current, start: 'top 85%', once: true }
+        : undefined,
+    })
+
+    return () => {
+      tween.kill()
+      split.revert()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ref, ...deps])
+}
+
+export function useMaskReveal(ref, options = {}) {
+  const { direction = 'up', scrub = false } = options
+  useEffect(() => {
+    if (!ref.current) return
+    const el = ref.current
+    const from =
+      direction === 'up'
+        ? 'inset(100% 0% 0% 0%)'
+        : direction === 'down'
+        ? 'inset(0% 0% 100% 0%)'
+        : direction === 'left'
+        ? 'inset(0% 0% 0% 100%)'
+        : 'inset(0% 100% 0% 0%)'
+
+    gsap.set(el, { clipPath: from, webkitClipPath: from })
+    const tween = gsap.to(el, {
+      clipPath: 'inset(0% 0% 0% 0%)',
+      webkitClipPath: 'inset(0% 0% 0% 0%)',
+      duration: 1.6,
+      ease: 'power4.out',
+      scrollTrigger: {
+        trigger: el,
+        start: 'top 80%',
+        end: scrub ? 'bottom 40%' : undefined,
+        scrub: scrub ? 1 : false,
+        once: !scrub,
+      },
+    })
+    return () => tween.kill()
+  }, [ref, direction, scrub])
+}
 
 export const fadeUp = {
   hidden: { opacity: 0, y: 40 },

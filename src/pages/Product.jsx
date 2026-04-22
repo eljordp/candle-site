@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react'
 import { useParams, Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { candles, productSpecs } from '../data'
-import { fadeUp, stagger, useCursorGlow, ScentJourney, CandleVisual } from '../components'
+import { fadeUp, stagger, useCursorGlow, ScentJourney, CandleVisual, useSplitTextReveal, useMaskReveal } from '../components'
 
 export default function Product() {
   const { slug } = useParams()
@@ -10,7 +10,20 @@ export default function Product() {
   const candle = candles.find((c) => c.slug === slug)
   const others = candles.filter((c) => c.slug !== slug)
   const sectionRef = useRef(null)
+  const imageRef = useRef(null)
+  const headlineRef = useRef(null)
   const glow = useCursorGlow(sectionRef, candle?.glowColor)
+
+  useMaskReveal(imageRef, { direction: 'up' })
+  useSplitTextReveal(headlineRef, {
+    by: 'chars',
+    stagger: 0.035,
+    duration: 1.1,
+    delay: 0.2,
+    ease: 'power4.out',
+    scrollTrigger: false,
+    deps: [slug],
+  })
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -71,11 +84,9 @@ export default function Product() {
 
           <div className="grid md:grid-cols-2 gap-10 md:gap-20 items-start">
             {/* Mood image with candle overlay */}
-            <motion.div
+            <div
+              ref={imageRef}
               className="relative overflow-hidden rounded-sm"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <div className="relative aspect-[3/4]">
                 <img
@@ -95,7 +106,7 @@ export default function Product() {
                   <CandleVisual candle={candle} size="md" animate={true} />
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Details */}
             <motion.div
@@ -106,9 +117,13 @@ export default function Product() {
               <motion.p variants={fadeUp} className="font-sans text-[10px] tracking-[0.35em] uppercase text-white/30 mb-3">
                 {candle.subtitle}
               </motion.p>
-              <motion.h1 variants={fadeUp} className="font-serif text-4xl md:text-6xl font-light text-white mb-3 tracking-tight">
+              <h1
+                key={candle.slug}
+                ref={headlineRef}
+                className="font-serif text-4xl md:text-6xl font-light text-white mb-3 tracking-tight overflow-hidden"
+              >
                 {candle.name}
-              </motion.h1>
+              </h1>
               <motion.p variants={fadeUp} className="font-sans text-[15px] text-white/50 mb-8">
                 ${candle.price} — {candle.size}
               </motion.p>

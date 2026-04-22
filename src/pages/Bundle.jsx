@@ -1,12 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { candles } from '../data'
-import { fadeUp, stagger, CandleVisual } from '../components'
+import { fadeUp, stagger, CandleVisual, useSplitTextReveal } from '../components'
 
 export default function Bundle() {
   const [selected, setSelected] = useState([])
   const location = useLocation()
+  const headlineRef = useRef(null)
+  useSplitTextReveal(headlineRef, {
+    by: 'chars',
+    stagger: 0.04,
+    duration: 1.1,
+    delay: 0.15,
+    ease: 'power4.out',
+    scrollTrigger: false,
+  })
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -52,9 +61,12 @@ export default function Bundle() {
             <motion.p variants={fadeUp} className="font-sans text-[10px] tracking-[0.4em] uppercase text-stone/50 mb-4">
               Build Your Set
             </motion.p>
-            <motion.h1 variants={fadeUp} className="font-serif text-4xl md:text-6xl font-light text-charcoal tracking-tight mb-4">
+            <h1
+              ref={headlineRef}
+              className="font-serif text-4xl md:text-6xl font-light text-charcoal tracking-tight mb-4 overflow-hidden"
+            >
               The Ritual
-            </motion.h1>
+            </h1>
             <motion.p variants={fadeUp} className="font-sans text-[13px] text-stone/50 font-light max-w-md mx-auto leading-relaxed">
               Select your favourites. Get all three for $155 and save.
             </motion.p>

@@ -7,6 +7,7 @@ import Bundle from './pages/Bundle'
 export default function App() {
   return (
     <div className="min-h-screen bg-cream">
+      <div className="grain-overlay" aria-hidden="true" />
       <Nav />
       <Routes>
         <Route path="/" element={<Home />} />

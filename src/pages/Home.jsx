@@ -1,65 +1,132 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
+import SplitType from 'split-type'
 import { candles } from '../data'
-import { fadeUp, stagger } from '../components'
+import { fadeUp, stagger, useSplitTextReveal, useMaskReveal } from '../components'
+
+gsap.registerPlugin(ScrollTrigger)
 
 function Hero() {
   const { scrollYProgress } = useScroll()
   const y = useTransform(scrollYProgress, [0, 0.3], [0, -80])
   const opacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
-  const imgScale = useTransform(scrollYProgress, [0, 0.3], [1, 1.1])
+  const headlineRef = useRef(null)
+  useSplitTextReveal(headlineRef, { stagger: 0.05, duration: 1.2, delay: 1.6, ease: 'power4.out', scrollTrigger: false })
 
   return (
-    <motion.section className="h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden" style={{ opacity }}>
-      <motion.div className="absolute inset-0 z-0" style={{ scale: imgScale }}>
-        <img src="/images/hero.jpg" alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/70" />
-      </motion.div>
+    <motion.section
+      className="h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden bg-black"
+      style={{ opacity }}
+    >
+      {/* Ambient flame glow filling the space */}
+      <motion.div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(255, 170, 80, 0.10) 0%, rgba(255, 140, 50, 0.05) 20%, transparent 60%)',
+        }}
+        animate={{ opacity: [0.6, 1, 0.8, 1, 0.7] }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+      />
 
-      {/* Warm golden ambient glow behind title */}
-      <div className="absolute inset-0 z-[1] flex items-center justify-center pointer-events-none">
-        <div className="w-[600px] h-[400px] rounded-full bg-gradient-radial from-amber-500/8 via-amber-700/4 to-transparent blur-3xl animate-glow-pulse"
-          style={{ background: 'radial-gradient(ellipse, rgba(196,168,124,0.12) 0%, rgba(196,168,124,0.04) 40%, transparent 70%)' }}
-        />
-      </div>
-
-      <motion.div className="text-center relative z-10" style={{ y }}>
+      <motion.div className="text-center relative z-10 flex flex-col items-center" style={{ y }}>
+        {/* Flame */}
         <motion.div
-          className="w-12 h-[1px] bg-white/30 mx-auto mb-10"
+          className="relative mb-14"
+          initial={{ opacity: 0, scale: 0.4 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.5, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+        >
+          {/* Outer blur halo */}
+          <motion.div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-44 rounded-full blur-3xl"
+            style={{ background: 'radial-gradient(circle, rgba(255, 180, 100, 0.55), transparent 70%)' }}
+            animate={{ scale: [1, 1.15, 0.95, 1.1, 1], opacity: [0.7, 1, 0.6, 0.9, 0.7] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          {/* Middle glow */}
+          <motion.div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full blur-xl"
+            style={{ background: 'radial-gradient(circle, rgba(255, 200, 120, 0.85), transparent 60%)' }}
+            animate={{ scale: [1, 1.1, 0.9, 1.05, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          {/* Flame shape */}
+          <motion.div
+            className="relative w-9 h-24"
+            style={{
+              background: 'linear-gradient(to top, rgba(255, 100, 30, 0.9) 0%, rgba(255, 160, 60, 0.88) 35%, rgba(255, 220, 130, 0.82) 70%, rgba(255, 240, 180, 0.6) 100%)',
+              borderRadius: '50% 50% 45% 45% / 72% 72% 28% 28%',
+              filter: 'blur(1px)',
+            }}
+            animate={{
+              scaleY: [1, 1.08, 0.94, 1.05, 1],
+              scaleX: [1, 0.94, 1.06, 0.97, 1],
+              rotate: [0, 1.5, -1.5, 0.5, 0],
+            }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            {/* Inner bright core */}
+            <motion.div
+              className="absolute left-1/2 -translate-x-1/2 bottom-1 w-4 h-16 rounded-full"
+              style={{
+                background: 'linear-gradient(to top, rgba(255, 220, 100, 0.95) 0%, rgba(255, 240, 180, 0.92) 50%, rgba(255, 255, 230, 0.75) 100%)',
+                filter: 'blur(0.5px)',
+              }}
+              animate={{ scaleY: [1, 0.9, 1.1, 0.95, 1], scaleX: [1, 1.1, 0.9, 1.05, 1] }}
+              transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            {/* Hottest blue-white base */}
+            <motion.div
+              className="absolute left-1/2 -translate-x-1/2 bottom-0 w-2 h-6 rounded-full"
+              style={{
+                background: 'linear-gradient(to top, rgba(180, 200, 255, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%)',
+                filter: 'blur(0.5px)',
+              }}
+              animate={{ opacity: [0.7, 1, 0.8, 0.95, 0.7] }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </motion.div>
+          {/* Wick */}
+          <div className="w-[1px] h-4 bg-gradient-to-b from-stone-700 to-stone-900 mx-auto" />
+        </motion.div>
+
+        <motion.div
+          className="w-12 h-[1px] bg-white/20 mx-auto mb-10"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 1.2, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 1.2, delay: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
         />
         <motion.p
-          className="font-sans text-[10px] md:text-[11px] tracking-[0.4em] uppercase text-white/60 mb-6"
+          className="font-sans text-[10px] md:text-[11px] tracking-[0.4em] uppercase text-white/50 mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          transition={{ duration: 0.8, delay: 1.4 }}
         >
           Fragrance Candles
         </motion.p>
-        <motion.h1
-          className="font-serif text-[clamp(3rem,10vw,9rem)] font-light text-white leading-[0.85] tracking-[-0.02em] mb-8"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+        <h1
+          ref={headlineRef}
+          className="font-serif text-[clamp(3rem,10vw,9rem)] font-light text-white leading-[0.85] tracking-[-0.02em] mb-8 overflow-hidden"
+          style={{ fontFamily: "'Instrument Serif', 'Fraunces', Georgia, serif" }}
         >
           VELVET EMBER
-        </motion.h1>
+        </h1>
         <motion.p
-          className="font-sans text-[13px] md:text-[14px] text-white/50 max-w-sm mx-auto leading-relaxed font-light"
+          className="font-sans text-[13px] md:text-[14px] text-white/40 max-w-sm mx-auto leading-relaxed font-light"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.1 }}
+          transition={{ duration: 1, delay: 2 }}
         >
           Iconic scents, reimagined for your space
         </motion.p>
         <motion.div
-          className="w-12 h-[1px] bg-white/30 mx-auto mt-10"
+          className="w-12 h-[1px] bg-white/20 mx-auto mt-10"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 1.2, delay: 1.3, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 1.2, delay: 2.2, ease: [0.25, 0.1, 0.25, 1] }}
         />
       </motion.div>
 
@@ -68,7 +135,7 @@ function Hero() {
         className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 2 }}
+        transition={{ duration: 1, delay: 2.8 }}
       >
         <span className="font-sans text-[8px] tracking-[0.4em] uppercase text-white/30">Scroll</span>
         <div className="animate-gentle-bounce">
@@ -194,6 +261,9 @@ function ProductCard({ candle, index }) {
 }
 
 function Collection() {
+  const headingRef = useRef(null)
+  useSplitTextReveal(headingRef, { by: 'words', stagger: 0.08, duration: 1.1 })
+
   return (
     <section id="collection" className="py-24 md:py-36 px-6 md:px-12 bg-cream relative">
       {/* Subtle warm gradient at top */}
@@ -210,7 +280,13 @@ function Collection() {
           <motion.p className="font-sans text-[10px] tracking-[0.4em] uppercase text-stone/50 mb-4" variants={fadeUp}>
             The Collection
           </motion.p>
-          <motion.div className="w-8 h-[1px] bg-gold/30 mx-auto" variants={fadeUp} />
+          <h2
+            ref={headingRef}
+            className="font-serif text-4xl md:text-6xl font-light text-charcoal tracking-tight mb-4 overflow-hidden"
+          >
+            Three signatures, one ritual
+          </h2>
+          <motion.div className="w-8 h-[1px] bg-gold/30 mx-auto mt-6" variants={fadeUp} />
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {candles.map((candle, i) => (
@@ -245,6 +321,9 @@ function Collection() {
 }
 
 function TheCraft() {
+  const headingRef = useRef(null)
+  useSplitTextReveal(headingRef, { by: 'words', stagger: 0.1, duration: 1.2 })
+
   const crafts = [
     {
       number: '01',
@@ -284,9 +363,12 @@ function TheCraft() {
           <motion.p variants={fadeUp} className="font-sans text-[10px] tracking-[0.4em] uppercase text-stone/50 mb-4">
             The Craft
           </motion.p>
-          <motion.h2 variants={fadeUp} className="font-serif text-3xl md:text-5xl font-light text-charcoal tracking-tight mb-4">
+          <h2
+            ref={headingRef}
+            className="font-serif text-3xl md:text-5xl font-light text-charcoal tracking-tight mb-4 overflow-hidden"
+          >
             Made with intention
-          </motion.h2>
+          </h2>
           <motion.div variants={fadeUp} className="w-12 h-[1px] bg-gold/40 mx-auto" />
         </motion.div>
 
@@ -316,35 +398,104 @@ function TheCraft() {
   )
 }
 
+function Manifesto() {
+  const sectionRef = useRef(null)
+  const quoteRef = useRef(null)
+
+  useEffect(() => {
+    if (!sectionRef.current || !quoteRef.current) return
+
+    const split = new SplitType(quoteRef.current, { types: 'words' })
+    if (!split.words || split.words.length === 0) return
+
+    gsap.set(split.words, { opacity: 0.08 })
+
+    const tween = gsap.to(split.words, {
+      opacity: 1,
+      stagger: 0.6,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: '+=140%',
+        scrub: 1,
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+      },
+    })
+
+    return () => {
+      tween.kill()
+      split.revert()
+    }
+  }, [])
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative h-screen flex items-center justify-center px-6 md:px-12 bg-charcoal overflow-hidden"
+    >
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse at 50% 40%, rgba(196,168,124,0.10) 0%, transparent 55%)',
+        }}
+      />
+      <div className="max-w-[1100px] mx-auto relative z-10">
+        <p className="font-sans text-[10px] tracking-[0.4em] uppercase text-white/25 mb-8 text-center">
+          Manifesto
+        </p>
+        <p
+          ref={quoteRef}
+          className="font-serif text-[clamp(1.75rem,5vw,3.75rem)] font-light text-white leading-[1.25] tracking-tight text-center"
+        >
+          A room remembers what it smells like. We pour slow, cure longer, and
+          pick notes that linger — so the rooms you love become the rooms you
+          never forget.
+        </p>
+        <div className="w-12 h-[1px] bg-gold/40 mx-auto mt-12" />
+      </div>
+    </section>
+  )
+}
+
 function About() {
   const imgRef = useRef(null)
+  const maskRef = useRef(null)
+  const headlineRef = useRef(null)
+  const copyRef = useRef(null)
+
   const { scrollYProgress } = useScroll({
     target: imgRef,
     offset: ['start end', 'end start'],
   })
-  const imgY = useTransform(scrollYProgress, [0, 1], [40, -40])
+  const imgY = useTransform(scrollYProgress, [0, 1], [60, -60])
+  const imgScale = useTransform(scrollYProgress, [0, 1], [1.15, 1])
+
+  useMaskReveal(maskRef, { direction: 'up' })
+  useSplitTextReveal(headlineRef, { by: 'words', stagger: 0.08, duration: 1.1 })
+  useSplitTextReveal(copyRef, { by: 'lines', stagger: 0.12, duration: 1.2, ease: 'power4.out' })
 
   return (
     <section id="about" className="py-24 md:py-36 px-6 bg-cream overflow-hidden">
       <div className="max-w-[1100px] mx-auto grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-        <motion.div
-          ref={imgRef}
+        <div
+          ref={maskRef}
           className="relative aspect-[4/3] md:aspect-[4/5] overflow-hidden"
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <motion.img
+            ref={imgRef}
             src="/images/lifestyle.jpg"
             alt="Hand-poured candle"
             className="w-full h-full object-cover"
-            style={{ y: imgY }}
+            style={{ y: imgY, scale: imgScale }}
           />
           {/* Gold accent border */}
           <div className="absolute bottom-0 left-0 w-16 h-[1px] bg-gold/40" />
           <div className="absolute bottom-0 left-0 w-[1px] h-16 bg-gold/40" />
-        </motion.div>
+        </div>
         <motion.div
           className="text-center md:text-left"
           initial="hidden"
@@ -356,14 +507,21 @@ function About() {
             Our Philosophy
           </motion.p>
           <motion.div variants={fadeUp} className="w-8 h-[1px] bg-gold/40 mb-10" />
-          <motion.p variants={fadeUp} className="font-sans text-[14px] text-stone/60 leading-[1.9] font-light mb-8">
+          <h3
+            ref={headlineRef}
+            className="font-serif text-3xl md:text-4xl font-light text-charcoal tracking-tight leading-[1.1] mb-8 overflow-hidden"
+          >
+            Scent is memory, made tangible.
+          </h3>
+          <p
+            ref={copyRef}
+            className="font-sans text-[14px] text-stone/60 leading-[1.9] font-light mb-8 overflow-hidden"
+          >
             We believe the fragrances you love shouldn't disappear when you leave the room.
             Each candle is hand-poured in small batches using premium soy wax and cotton wicks.
-          </motion.p>
-          <motion.p variants={fadeUp} className="font-sans text-[14px] text-stone/60 leading-[1.9] font-light">
             No shortcuts. No synthetics. Just clean-burning, long-lasting luxury.
-          </motion.p>
-          <motion.div variants={fadeUp} className="w-8 h-[1px] bg-gold/40 mt-10" />
+          </p>
+          <motion.div variants={fadeUp} className="w-8 h-[1px] bg-gold/40 mt-4" />
         </motion.div>
       </div>
     </section>
@@ -371,6 +529,9 @@ function About() {
 }
 
 function Contact() {
+  const headingRef = useRef(null)
+  useSplitTextReveal(headingRef, { by: 'words', stagger: 0.08, duration: 1.1 })
+
   return (
     <section id="contact" className="py-24 md:py-36 px-6 bg-charcoal relative overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -390,9 +551,12 @@ function Contact() {
         <motion.p variants={fadeUp} className="font-sans text-[10px] tracking-[0.4em] uppercase text-white/30 mb-6">
           Newsletter
         </motion.p>
-        <motion.h2 variants={fadeUp} className="font-serif text-3xl md:text-4xl font-light text-white mb-4 tracking-tight">
+        <h2
+          ref={headingRef}
+          className="font-serif text-3xl md:text-4xl font-light text-white mb-4 tracking-tight overflow-hidden"
+        >
           Stay in the know
-        </motion.h2>
+        </h2>
         <motion.p variants={fadeUp} className="font-sans text-[13px] text-white/35 font-light mb-10">
           New scents, restocks, and limited drops.
         </motion.p>
@@ -423,6 +587,7 @@ export default function Home() {
       <Marquee />
       <Collection />
       <TheCraft />
+      <Manifesto />
       <About />
       <Contact />
     </>
