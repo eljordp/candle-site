@@ -32,65 +32,26 @@ function Hero() {
       />
 
       <motion.div className="text-center relative z-10 flex flex-col items-center" style={{ y }}>
-        {/* Flame */}
+        {/* Flame — 4K video loop */}
         <motion.div
-          className="relative mb-14"
-          initial={{ opacity: 0, scale: 0.4 }}
+          className="relative mb-8 md:mb-10 w-40 h-56 md:w-56 md:h-80"
+          initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.5, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 1.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          {/* Outer blur halo */}
-          <motion.div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-44 rounded-full blur-3xl"
-            style={{ background: 'radial-gradient(circle, rgba(255, 180, 100, 0.55), transparent 70%)' }}
-            animate={{ scale: [1, 1.15, 0.95, 1.1, 1], opacity: [0.7, 1, 0.6, 0.9, 0.7] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          {/* Middle glow */}
-          <motion.div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full blur-xl"
-            style={{ background: 'radial-gradient(circle, rgba(255, 200, 120, 0.85), transparent 60%)' }}
-            animate={{ scale: [1, 1.1, 0.9, 1.05, 1] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          {/* Flame shape */}
-          <motion.div
-            className="relative w-9 h-24"
-            style={{
-              background: 'linear-gradient(to top, rgba(255, 100, 30, 0.9) 0%, rgba(255, 160, 60, 0.88) 35%, rgba(255, 220, 130, 0.82) 70%, rgba(255, 240, 180, 0.6) 100%)',
-              borderRadius: '50% 50% 45% 45% / 72% 72% 28% 28%',
-              filter: 'blur(1px)',
-            }}
-            animate={{
-              scaleY: [1, 1.08, 0.94, 1.05, 1],
-              scaleX: [1, 0.94, 1.06, 0.97, 1],
-              rotate: [0, 1.5, -1.5, 0.5, 0],
-            }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+          <video
+            poster="/video/flame-poster.jpg"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-contain"
+            style={{ mixBlendMode: 'screen' }}
           >
-            {/* Inner bright core */}
-            <motion.div
-              className="absolute left-1/2 -translate-x-1/2 bottom-1 w-4 h-16 rounded-full"
-              style={{
-                background: 'linear-gradient(to top, rgba(255, 220, 100, 0.95) 0%, rgba(255, 240, 180, 0.92) 50%, rgba(255, 255, 230, 0.75) 100%)',
-                filter: 'blur(0.5px)',
-              }}
-              animate={{ scaleY: [1, 0.9, 1.1, 0.95, 1], scaleX: [1, 1.1, 0.9, 1.05, 1] }}
-              transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            {/* Hottest blue-white base */}
-            <motion.div
-              className="absolute left-1/2 -translate-x-1/2 bottom-0 w-2 h-6 rounded-full"
-              style={{
-                background: 'linear-gradient(to top, rgba(180, 200, 255, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%)',
-                filter: 'blur(0.5px)',
-              }}
-              animate={{ opacity: [0.7, 1, 0.8, 0.95, 0.7] }}
-              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
-            />
-          </motion.div>
-          {/* Wick */}
-          <div className="w-[1px] h-4 bg-gradient-to-b from-stone-700 to-stone-900 mx-auto" />
+            <source src="/video/flame-1440.webm" type="video/webm" />
+            <source src="/video/flame-1440.mp4" type="video/mp4" />
+          </video>
         </motion.div>
 
         <motion.div
