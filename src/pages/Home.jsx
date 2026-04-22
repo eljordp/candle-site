@@ -109,7 +109,7 @@ function Hero() {
         </motion.p>
         <h1
           ref={headlineRef}
-          className="font-serif text-[clamp(3rem,10vw,9rem)] font-light text-white leading-[0.85] tracking-[-0.02em] mb-8 overflow-hidden"
+          className="font-serif text-[clamp(2.25rem,11vw,9rem)] font-light text-white leading-[0.9] tracking-[-0.02em] mb-10 md:mb-8 overflow-hidden whitespace-nowrap"
           style={{ fontFamily: "'Instrument Serif', 'Fraunces', Georgia, serif" }}
         >
           VELVET EMBER
