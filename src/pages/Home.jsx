@@ -21,24 +21,13 @@ function Hero() {
       className="h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden bg-black"
       style={{ opacity }}
     >
-      {/* Ambient flame glow filling the space */}
-      <motion.div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(255, 170, 80, 0.10) 0%, rgba(255, 140, 50, 0.05) 20%, transparent 60%)',
-        }}
-        animate={{ opacity: [0.6, 1, 0.8, 1, 0.7] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
       <motion.div className="text-center relative z-10 flex flex-col items-center" style={{ y }}>
-        {/* Flame — 4K video loop */}
+        {/* Flame — 4K video loop, pure black bg so no blend mode needed */}
         <motion.div
           className="relative mb-8 md:mb-10 w-48 h-72 md:w-64 md:h-96"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 2.2, delay: 0.2, ease: 'easeOut' }}
-          style={{ mixBlendMode: 'lighten' }}
         >
           <video
             poster="/video/flame-poster.jpg"
