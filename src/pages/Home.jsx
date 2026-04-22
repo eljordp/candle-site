@@ -80,20 +80,6 @@ function Hero() {
         />
       </motion.div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 2.8 }}
-      >
-        <span className="font-sans text-[8px] tracking-[0.4em] uppercase text-white/30">Scroll</span>
-        <div className="animate-gentle-bounce">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M4 6L8 10L12 6" stroke="rgba(255,255,255,0.4)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-      </motion.div>
     </motion.section>
   )
 }
